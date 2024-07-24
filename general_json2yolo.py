@@ -1,5 +1,6 @@
 import contextlib
 import json
+import os.path
 from collections import defaultdict
 
 import cv2
@@ -307,7 +308,9 @@ def convert_coco_json(json_dir="../coco/annotations/", use_segments=False, cls91
                         segments.append(s)
 
             # Write
-            with open((fn / f).with_suffix(".txt"), "a") as file:
+            if not (fn / f.split("/")[0]).exists():
+                (fn / f.split("/")[0]).mkdir(parents=True)
+            with open((fn / f).with_suffix(".txt"), mode="a") as file:
                 for i in range(len(bboxes)):
                     line = (*(segments[i] if use_segments else bboxes[i]),)  # cls, box or segments
                     file.write(("%g " * len(line)).rstrip() % line + "\n")
@@ -391,8 +394,8 @@ if __name__ == "__main__":
 
     if source == "COCO":
         convert_coco_json(
-            "../datasets/coco/annotations",  # directory with *.json
-            use_segments=True,
+            "/Users/daubersonmol/Downloads/insplad_plad_obj_detec_idv_data/plad",  # directory with *.json
+            use_segments=False,
             cls91to80=True,
         )
 
